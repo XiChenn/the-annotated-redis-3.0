@@ -52,18 +52,19 @@ struct sdshdr {
 
 /*	下面两个是static函数，仅在本文件可见 */
 
-/* 获取字符串长度 */
+/* 获取字符串长度 - O(1)时间复杂度 */
 static inline size_t sdslen(const sds s) {
-	//	sizeof(struct sdshdr)的值为8
+	//	sizeof(struct sdshdr)的值为8(两个int的size为4+4bytes 字符数组未分配空间故size为0)
 	/*	这里为什么用s-(sizeof(struct sdshdr))就得到sdshdr *指针？
 		从后面我们可以看到sds指向sdshdr结构的buf[]字符数组，所以
 		s-(sizeof(struct sdshdr))就是sdshdr结构的地址。
 	*/
+	//      这里char*类型指针被cast成更通用的void*类型指针，然后隐式地转成struct sdshdr*类型指针
     struct sdshdr *sh = (void*)(s-(sizeof(struct sdshdr)));
     return sh->len;
 }
 
-/* 获取字符数组中的可用空间 */
+/* 获取字符数组中的可用空间 - O(1)时间复杂度 */
 static inline size_t sdsavail(const sds s) {
 	//	sizeof(struct sdshdr)的值为8
     struct sdshdr *sh = (void*)(s-(sizeof(struct sdshdr)));
